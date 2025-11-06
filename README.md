@@ -1,0 +1,138 @@
+# SteamLoader
+
+**SteamLoader**, Steam oyunlarını kolayca yüklemenizi ve yönetmenizi sağlayan modern bir masaüstü uygulamasıdır.
+
+## 📋 Özellikler
+
+- ✨ Sürükle-bırak ile kolay oyun yükleme
+- 🎮 Otomatik DLC desteği (Steam API ile)
+- 🗑️ Oyun silme ve temizleme araçları
+- 🔄 Steam'i hızlıca yeniden başlatma
+- 🎨 Modern ve kullanıcı dostu arayüz
+- 🔒 Otomatik yapılandırma dosyası yönetimi
+
+## 🚀 Kurulum
+
+### Gereksinimler
+
+- Windows işletim sistemi
+- Python 3.8+ (kaynak koddan çalıştırıyorsanız)
+- İnternet bağlantısı (DLC bilgileri için)
+
+### Bağımlılıklar
+
+```bash
+pip install PySide6 requests
+```
+
+## 📖 Kullanım
+
+### 1. Oyun Dosyası Hazırlama
+
+- **fares.top** sitesinden oyunun ZIP dosyasını indirin
+- ZIP dosyasının adı **mutlaka AppID olmalıdır** (örnek: `730.zip`, `271590.zip`)
+  - AppID'yi Steam Store sayfasındaki URL'den bulabilirsiniz
+  - Örnek: `store.steampowered.com/app/730/` → AppID: **730**
+
+### 2. Uygulama Adımları
+
+#### Adım 1: Steam Klasörünü Seçin
+- "Gözat" butonuna tıklayın
+- Steam'in kurulu olduğu ana klasörü seçin (örnek: `C:\Program Files (x86)\Steam`)
+
+#### Adım 2: Oyun Yükleme
+- İndirdiğiniz ZIP dosyasını sürükleyip ortadaki alana bırakın
+- VEYA alana tıklayıp manuel olarak seçin
+- Uygulama otomatik olarak:
+  - `.lua` dosyalarını `config/stplug-in/` dizinine
+  - `.manifest` dosyalarını `config/depotcache/` dizinine kopyalar
+  - DLC bilgilerini Steam API'den çeker ve `yekuda.lua` dosyasına ekler
+  - `hid.dll` dosyasını Steam ana dizinine indirir (yoksa)
+
+#### Adım 3: Steam'i Yeniden Başlatın
+- "Steam'i Yeniden Başlat" butonuna tıklayın
+- Oyununuz Steam kütüphanenizde görünecektir
+
+### 3. Oyun Yönetimi
+
+#### Oyun Silme
+- "Silinecek Oyun ID'sini Girin" alanına AppID'yi yazın
+- "Oyunu Sil" butonuna tıklayın
+- Ana oyun + tüm DLC'ler temizlenecektir
+
+#### Toplu Temizleme
+- "Tüm Eklenen Oyunları Temizle" butonu ile tüm yapılandırma dosyalarını silebilirsiniz
+
+## 📁 Dosya Yapısı
+
+```
+Steam/
+├── steam.exe
+├── hid.dll (otomatik indirilir)
+└── config/
+    ├── stplug-in/
+    │   ├── yekuda.lua (DLC listesi)
+    │   └── [AppID].lua (oyun yapılandırmaları)
+    └── depotcache/
+        └── *.manifest (depot dosyaları)
+```
+
+## ⚙️ Teknik Detaylar
+
+### Desteklenen Dosya Formatları
+- **Giriş**: `.zip` arşivleri (AppID olarak adlandırılmış)
+- **Çıkarılan dosyalar**: `.lua` (yapılandırma), `.manifest` (depot)
+
+### API Kullanımı
+- Steam Store API: `https://store.steampowered.com/api/appdetails`
+- DLC bilgileri otomatik olarak çekilir ve yapılandırmaya eklenir
+
+### Otomatik İndirmeler
+- `hid.dll` dosyası ilk yüklemede otomatik olarak indirilir
+- Kaynak: `http://yekuda.com/dll/hid.dll`
+- **Not**: Bu DLL dosyası tamamen virüssüzdür ve sadece programın düzgün çalışması için gereklidir
+
+## 🛠️ Geliştirme
+
+### Kaynak Koddan Çalıştırma
+
+```bash
+python steamloader.py
+```
+
+### Executable Oluşturma (PyInstaller)
+
+```bash
+pip install pyinstaller
+pyinstaller --onefile --windowed --icon=favicon.ico --add-data "favicon.ico;." steamloader.py
+```
+
+## ⚠️ Önemli Notlar
+
+1. **ZIP dosyası adlandırması**: Dosya adı mutlaka sadece sayılardan oluşmalı (AppID)
+2. **Steam kapalı olmalı**: Dosya kopyalama sırasında Steam'in kapalı olması önerilir
+3. **Yedekleme**: İşlem öncesi `config` klasörünü yedeklemeniz önerilir
+4. **İnternet bağlantısı**: DLC bilgileri için gereklidir
+
+## 🎨 Arayüz
+
+- **Koyu tema** ile göz yorgunluğunu azaltır
+- **Sürükle-bırak** desteği ile hızlı işlem
+- **Anında geri bildirim** ile kullanıcı dostu deneyim
+- **Onay diyalogları** ile güvenli silme işlemleri
+
+## ⚖️ Sorumluluk Reddi
+
+Bu yazılım "olduğu gibi" sunulmaktadır. Kullanıcılar bu uygulamayı kullanarak tüm sorumluluğu kabul ederler. Herhangi bir yasal veya teknik sorundan kullanıcılar sorumludur.
+
+## 🔗 Kaynaklar
+
+- Oyun dosyaları: **fares.top**
+- Steam API Dokümantasyonu: [Steamworks API](https://partner.steamgames.com/doc/webapi)
+
+## 💡 İpuçları
+
+- **AppID Bulma**: Steam Store → Oyun sayfası → URL'deki sayı
+- **Çoklu Oyun**: Her oyun için ayrı ZIP dosyası kullanın
+- **DLC Sorunları**: İnternet bağlantınızı kontrol edin
+- **Hata Durumu**: Steam klasör yolunu doğrulayın
