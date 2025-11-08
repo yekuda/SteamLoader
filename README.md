@@ -136,3 +136,5 @@ Bu yazılım "olduğu gibi" sunulmaktadır. Kullanıcılar bu uygulamayı kullan
 - **Çoklu Oyun**: Her oyun için ayrı ZIP dosyası kullanın
 - **DLC Sorunları**: İnternet bağlantınızı kontrol edin
 - **Hata Durumu**: Steam klasör yolunu doğrulayın
+
+---
