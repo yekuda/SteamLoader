@@ -10,6 +10,8 @@
 - 🔄 Steam'i hızlıca yeniden başlatma
 - 🎨 Modern ve kullanıcı dostu arayüz
 - 🔒 Otomatik yapılandırma dosyası yönetimi
+- 💾 Steam klasörü yolunun otomatik kaydedilmesi
+- 🚀 Uygulama açıldığında kaydedilmiş ayarların otomatik yüklenmesi
 
 ## 🚀 Kurulum
 
@@ -39,6 +41,8 @@ pip install PySide6 requests
 #### Adım 1: Steam Klasörünü Seçin
 - "Gözat" butonuna tıklayın
 - Steam'in kurulu olduğu ana klasörü seçin (örnek: `C:\Program Files (x86)\Steam`)
+- **Not**: Seçtiğiniz klasör otomatik olarak kaydedilir ve bir sonraki açılışta otomatik yüklenir
+- Steam klasörü alanı sadece "Gözat" butonu ile düzenlenebilir (manuel yazı girişi yapılamaz)
 
 #### Adım 2: Oyun Yükleme
 - İndirdiğiniz ZIP dosyasını sürükleyip ortadaki alana bırakın
@@ -98,12 +102,18 @@ SteamLoader/
 - Kaynak: `http://yekuda.com/dll/hid.dll`
 - **Not**: Bu DLL dosyası tamamen virüssüzdür ve sadece programın düzgün çalışması için gereklidir
 
+### Ayarlar ve Yapılandırma
+- Steam klasörü yolu otomatik olarak kaydedilir
+- Config dosyası konumu: `%LOCALAPPDATA%\SteamLoader\config.json` (Windows)
+- Config dosyası formatı: JSON
+- Uygulama her açılışta kaydedilmiş ayarları otomatik yükler
+
 ## 🛠️ Geliştirme
 
 ### Kaynak Koddan Çalıştırma
 
 ```bash
-python steamloader.py
+python main.py
 ```
 
 ## ⚠️ Önemli Notlar
@@ -112,6 +122,8 @@ python steamloader.py
 2. **Steam kapalı olmalı**: Dosya kopyalama sırasında Steam'in kapalı olması önerilir
 3. **Yedekleme**: İşlem öncesi `config` klasörünü yedeklemeniz önerilir
 4. **İnternet bağlantısı**: DLC bilgileri için gereklidir
+5. **Ayarların saklanması**: Steam klasörü yolu otomatik olarak `%LOCALAPPDATA%\SteamLoader\config.json` dosyasına kaydedilir
+6. **İlk kullanım**: İlk açılışta Steam klasörünü seçmeniz gerekir, sonraki açılışlarda otomatik yüklenir
 
 ## 🎨 Arayüz
 
@@ -119,6 +131,8 @@ python steamloader.py
 - **Sürükle-bırak** desteği ile hızlı işlem
 - **Anında geri bildirim** ile kullanıcı dostu deneyim
 - **Onay diyalogları** ile güvenli silme işlemleri
+- **Read-only alanlar** ile yanlış girişleri önler
+- **Otomatik ayar yükleme** ile kullanıcı deneyimini iyileştirir
 
 ## ⚖️ Sorumluluk Reddi
 
@@ -135,5 +149,7 @@ Bu yazılım "olduğu gibi" sunulmaktadır. Kullanıcılar bu uygulamayı kullan
 - **Çoklu Oyun**: Her oyun için ayrı ZIP dosyası kullanın
 - **DLC Sorunları**: İnternet bağlantınızı kontrol edin
 - **Hata Durumu**: Steam klasör yolunu doğrulayın
+- **Ayarları Sıfırlama**: `%LOCALAPPDATA%\SteamLoader\config.json` dosyasını silerek ayarları sıfırlayabilirsiniz
+- **Klasör Değiştirme**: Steam klasörünü değiştirmek için "Gözat" butonunu kullanın
 
 ---
