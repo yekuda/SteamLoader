@@ -106,13 +106,6 @@ SteamLoader/
 python steamloader.py
 ```
 
-### Executable Oluşturma (PyInstaller)
-
-```bash
-pip install pyinstaller
-pyinstaller --onefile --windowed --icon=favicon.ico --add-data "favicon.ico;." steamloader.py
-```
-
 ## ⚠️ Önemli Notlar
 
 1. **ZIP dosyası adlandırması**: Dosya adı mutlaka sadece sayılardan oluşmalı (AppID)
