@@ -66,15 +66,21 @@ pip install PySide6 requests
 ## 📁 Dosya Yapısı
 
 ```
-Steam/
-├── steam.exe
-├── hid.dll (otomatik indirilir)
-└── config/
-    ├── stplug-in/
-    │   ├── yekuda.lua (DLC listesi)
-    │   └── [AppID].lua (oyun yapılandırmaları)
-    └── depotcache/
-        └── *.manifest (depot dosyaları)
+SteamLoader/
+├── main.py                  # Uygulama giriş noktası
+├── main_window.py           # Ana pencere ve arayüz yönetimi
+├── core/                    # Uygulamanın iş mantığı
+│   ├── event_handlers.py
+│   └── steam_operations.py
+├── ui/                      # Arayüz bileşenleri
+│   ├── dialogs.py
+│   ├── style.py
+│   ├── ui_components.py
+│   └── widgets.py
+├── utils/                   # Yardımcı fonksiyonlar
+│   └── utils.py
+├── README.md
+└── favicon.ico
 ```
 
 ## ⚙️ Teknik Detaylar
