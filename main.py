@@ -1,5 +1,9 @@
 import sys
 import os
+
+# Python bytecode oluşturmayı engelle
+sys.dont_write_bytecode = True
+
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QFont, QIcon
 

@@ -1,11 +1,14 @@
 import os
 from ui.dialogs import show_info, show_error, confirm_action
+from utils.utils import save_steam_path
 
 def handle_steam_folder_selection(parent):
     """Steam klasörü seçimini işler"""
     folder = parent.file_dialog.getExistingDirectory(parent, 'Steam klasörünü seçin')
     if folder:
         parent.path_edit.setText(folder)
+        # Seçilen klasörü config dosyasına kaydet
+        save_steam_path(folder)
 
 def handle_zip_file_selection(parent):
     """ZIP dosyası seçimini işler"""

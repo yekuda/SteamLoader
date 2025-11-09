@@ -23,7 +23,7 @@ from core.event_handlers import (
     validate_steam_path, handle_game_deletion, 
     handle_clear_all_files, handle_steam_restart
 )
-from utils.utils import download_dll_if_missing, restart_steam
+from utils.utils import download_dll_if_missing, restart_steam, load_steam_path
 from core.steam_operations import process_zip_file, delete_game_files, clear_all_added_files
 from ui.dialogs import show_info, show_error, confirm_action
 
@@ -43,6 +43,9 @@ class SteamUploader(QWidget):
         
         # Olay bağlamalarını yap
         self.setup_connections()
+        
+        # Kaydedilmiş Steam klasör yolunu yükle
+        self.load_saved_steam_path()
 
     def setup_ui(self):
         """Arayüzü oluşturur"""
@@ -84,6 +87,12 @@ class SteamUploader(QWidget):
         self.delete_btn.clicked.connect(self.delete_game)
         self.restart_btn.clicked.connect(self.restart_steam)
         self.clear_btn.clicked.connect(self.clear_all_added_files)
+    
+    def load_saved_steam_path(self):
+        """Kaydedilmiş Steam klasör yolunu yükler"""
+        saved_path = load_steam_path()
+        if saved_path and os.path.isdir(saved_path):
+            self.path_edit.setText(saved_path)
 
     def select_zip_file(self):
         """ZIP dosyası seçimi"""

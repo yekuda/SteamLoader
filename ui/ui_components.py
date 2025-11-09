@@ -32,6 +32,7 @@ def create_path_selection_layout(parent):
     path_layout = QHBoxLayout()
     path_edit = QLineEdit()
     path_edit.setPlaceholderText('Steam klasörünü seçin...')
+    path_edit.setReadOnly(True)  # Kullanıcı manuel yazı yazamaz, sadece Gözat ile seçebilir
     browse_btn = QPushButton('Gözat')
     path_layout.addWidget(path_edit, stretch=3)
     path_layout.addWidget(browse_btn, stretch=1)
