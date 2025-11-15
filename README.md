@@ -17,21 +17,20 @@
 
 ### Gereksinimler
 
+- ⚠️ **OYUN DOSYASI**: Aşağıdaki sitelerden birinden oyunun ZIP dosyasını indirmeniz **ZORUNLUDUR** (olmazsa uygulama çalışmaz):
+  - [Steam Manifest Hub](https://steamtools.pages.dev/)
+  - [SteamML](https://steamml.vercel.app/)
 - Windows işletim sistemi
 - Python 3.8+ (kaynak koddan çalıştırıyorsanız)
-- İnternet bağlantısı (DLC bilgileri için)
-
-### Bağımlılıklar
-
-```bash
-pip install PySide6 requests
-```
+- İnternet bağlantısı (DLC bilgileri ve oyun dosyası indirme için)
 
 ## 📖 Kullanım
 
 ### 1. Oyun Dosyası Hazırlama
 
-- **fares.top** sitesinden oyunun ZIP dosyasını indirin
+- Aşağıdaki sitelerden **birinden** oyunun ZIP dosyasını indirin:
+  - [Steam Manifest Hub](https://steamtools.pages.dev/)
+  - [SteamML](https://steamml.vercel.app/)
 - ZIP dosyasının adı **mutlaka AppID olmalıdır** (örnek: `730.zip`, `271590.zip`)
   - AppID'yi Steam Store sayfasındaki URL'den bulabilirsiniz
   - Örnek: `store.steampowered.com/app/730/` → AppID: **730**
@@ -119,11 +118,10 @@ python main.py
 ## ⚠️ Önemli Notlar
 
 1. **ZIP dosyası adlandırması**: Dosya adı mutlaka sadece sayılardan oluşmalı (AppID)
-2. **Steam kapalı olmalı**: Dosya kopyalama sırasında Steam'in kapalı olması önerilir
-3. **Yedekleme**: İşlem öncesi `config` klasörünü yedeklemeniz önerilir
-4. **İnternet bağlantısı**: DLC bilgileri için gereklidir
-5. **Ayarların saklanması**: Steam klasörü yolu otomatik olarak `%LOCALAPPDATA%\SteamLoader\config.json` dosyasına kaydedilir
-6. **İlk kullanım**: İlk açılışta Steam klasörünü seçmeniz gerekir, sonraki açılışlarda otomatik yüklenir
+2. **Yedekleme**: İşlem öncesi `config` klasörünü yedeklemeniz önerilir
+3. **İnternet bağlantısı**: DLC bilgileri için gereklidir
+4. **Ayarların saklanması**: Steam klasörü yolu otomatik olarak `%LOCALAPPDATA%\SteamLoader\config.json` dosyasına kaydedilir
+5. **İlk kullanım**: İlk açılışta Steam klasörünü seçmeniz gerekir, sonraki açılışlarda otomatik yüklenir
 
 ## 🎨 Arayüz
 
@@ -140,7 +138,9 @@ Bu yazılım "olduğu gibi" sunulmaktadır. Kullanıcılar bu uygulamayı kullan
 
 ## 🔗 Kaynaklar
 
-- Oyun dosyaları: **fares.top**
+- Oyun dosyaları:
+  - [Steam Manifest Hub](https://steamtools.pages.dev/)
+  - [SteamML](https://steamml.vercel.app/)
 - Steam API Dokümantasyonu: [Steamworks API](https://partner.steamgames.com/doc/webapi)
 
 ## 💡 İpuçları
