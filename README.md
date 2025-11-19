@@ -13,6 +13,11 @@
 - 💾 Steam klasörü yolunun otomatik kaydedilmesi
 - 🚀 Uygulama açıldığında kaydedilmiş ayarların otomatik yüklenmesi
 
+## ⚠️ Önemli Uyarılar
+
+- ⚠️ **Bu yazılım online oyunlarda çalışmaz.**
+- ⚠️ **Denuvo gibi gelişmiş koruma sistemine sahip oyunlarla uyumlu değildir.**
+
 ## 🚀 Kurulum
 
 ### Gereksinimler
