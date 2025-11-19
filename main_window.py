@@ -23,9 +23,22 @@ from core.event_handlers import (
     validate_steam_path, handle_game_deletion, 
     handle_clear_all_files, handle_steam_restart
 )
-from utils.utils import download_dll_if_missing, restart_steam, load_steam_path
+from utils.utils import download_dll_if_missing, restart_steam, load_steam_path, check_for_updates, APP_VERSION
 from core.steam_operations import process_zip_file, delete_game_files, clear_all_added_files
-from ui.dialogs import show_info, show_error, confirm_action, show_games_dialog
+from ui.dialogs import show_info, show_error, confirm_action, show_games_dialog, show_update_dialog
+
+class UpdateCheckerThread(QThread):
+    """Güncelleme kontrolünü arka planda yapan thread"""
+    update_found = Signal(dict)
+    
+    def __init__(self, current_version):
+        super().__init__()
+        self.current_version = current_version
+    
+    def run(self):
+        update_info = check_for_updates(self.current_version)
+        if update_info.get('available'):
+            self.update_found.emit(update_info)
 
 class SteamUploader(QWidget):
     def __init__(self):
@@ -46,6 +59,9 @@ class SteamUploader(QWidget):
         
         # Kaydedilmiş Steam klasör yolunu yükle
         self.load_saved_steam_path()
+        
+        # Güncelleme kontrolü (arka planda)
+        self.check_updates_async()
 
     def setup_ui(self):
         """Arayüzü oluşturur"""
@@ -190,3 +206,12 @@ class SteamUploader(QWidget):
             return
         
         show_games_dialog(self, steam_path)
+    
+    def check_updates_async(self):
+        """Güncelleme kontrolünü arka planda yapar"""
+        current_version = APP_VERSION
+        checker_thread = UpdateCheckerThread(current_version)
+        checker_thread.setParent(self)  # Thread'i pencereye bağla
+        checker_thread.update_found.connect(lambda info: show_update_dialog(self, info))
+        checker_thread.finished.connect(checker_thread.deleteLater)  # Thread bitince temizle
+        checker_thread.start()
