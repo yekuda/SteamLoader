@@ -6,12 +6,14 @@
 
 - ✨ Sürükle-bırak ile kolay oyun yükleme
 - 🎮 Otomatik DLC desteği (Steam API ile)
+- 📋 Eklenen oyunları görüntüleme (Steam API ile oyun isimleri)
 - 🗑️ Oyun silme ve temizleme araçları
 - 🔄 Steam'i hızlıca yeniden başlatma
 - 🎨 Modern ve kullanıcı dostu arayüz
 - 🔒 Otomatik yapılandırma dosyası yönetimi
 - 💾 Steam klasörü yolunun otomatik kaydedilmesi
 - 🚀 Uygulama açıldığında kaydedilmiş ayarların otomatik yüklenmesi
+- ⚡ Threading ile performans optimizasyonu
 
 ## ⚠️ Önemli Uyarılar
 
@@ -62,6 +64,12 @@
 - Oyununuz Steam kütüphanenizde görünecektir
 
 ### 3. Oyun Yönetimi
+
+#### Eklenen Oyunları Görüntüleme
+- "Eklenen Oyunları Göster" butonuna tıklayın
+- Açılan dialog penceresinde eklenen tüm oyunlar görüntülenir
+- Oyunlar Steam API'den çekilen isimleriyle birlikte gösterilir
+- Oyunlar arka planda yüklenir, uygulama donmaz
 
 #### Oyun Silme
 - "Silinecek Oyun ID'sini Girin" alanına AppID'yi yazın
@@ -136,6 +144,8 @@ python main.py
 - **Onay diyalogları** ile güvenli silme işlemleri
 - **Read-only alanlar** ile yanlış girişleri önler
 - **Otomatik ayar yükleme** ile kullanıcı deneyimini iyileştirir
+- **Dialog pencereleri** ile temiz ve organize görünüm
+- **Threading** ile akıcı performans (UI donmaz)
 
 ## ⚖️ Sorumluluk Reddi
 
@@ -156,5 +166,7 @@ Bu yazılım "olduğu gibi" sunulmaktadır. Kullanıcılar bu uygulamayı kullan
 - **Hata Durumu**: Steam klasör yolunu doğrulayın
 - **Ayarları Sıfırlama**: `%LOCALAPPDATA%\SteamLoader\config.json` dosyasını silerek ayarları sıfırlayabilirsiniz
 - **Klasör Değiştirme**: Steam klasörünü değiştirmek için "Gözat" butonunu kullanın
+- **Eklenen Oyunları Kontrol**: "Eklenen Oyunları Göster" butonu ile yüklediğiniz oyunları kontrol edebilirsiniz
+- **Oyun İsimleri**: Oyun isimleri Steam API'den otomatik olarak çekilir, internet bağlantısı gereklidir
 
 ---

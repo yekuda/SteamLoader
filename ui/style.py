@@ -74,3 +74,47 @@ QLabel:hover {
     color: #d0d0d0;
 }
 '''
+
+# Oyunlar container stili
+GAMES_CONTAINER_STYLE = '''
+QWidget {
+    background: transparent;
+}
+'''
+
+# Liste widget stili
+LIST_WIDGET_STYLE = '''
+QListWidget {
+    border: 2px solid #9c783e;
+    border-radius: 8px;
+    background: #1d1e1a;
+    color: #d0d0d0;
+    font-size: 13px;
+    padding: 5px;
+}
+QListWidget::item {
+    padding: 8px;
+    border-radius: 4px;
+    margin: 2px;
+}
+QListWidget::item:hover {
+    background: #353632;
+}
+QScrollBar:vertical {
+    border: none;
+    background: #1d1e1a;
+    width: 10px;
+    border-radius: 5px;
+}
+QScrollBar::handle:vertical {
+    background: #9c783e;
+    border-radius: 5px;
+    min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #8a6a35;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+'''

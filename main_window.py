@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QFileDialog, QApplication
+    QWidget, QVBoxLayout, QFileDialog, QApplication, QLabel, QPushButton
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QThread, Signal
 
 # PySide6 sabitlerini doğrudan içe aktar
 AlignTop = Qt.AlignTop
@@ -25,7 +25,7 @@ from core.event_handlers import (
 )
 from utils.utils import download_dll_if_missing, restart_steam, load_steam_path
 from core.steam_operations import process_zip_file, delete_game_files, clear_all_added_files
-from ui.dialogs import show_info, show_error, confirm_action
+from ui.dialogs import show_info, show_error, confirm_action, show_games_dialog
 
 class SteamUploader(QWidget):
     def __init__(self):
@@ -66,6 +66,11 @@ class SteamUploader(QWidget):
         self.dragdrop_label = DragDropLabel(self)
         main_layout.addWidget(self.dragdrop_label, stretch=1)
         
+        # Eklenen oyunlar butonu
+        self.show_games_btn = QPushButton("Eklenen Oyunları Göster")
+        # Stil diğer butonlarla aynı (MAIN_WINDOW_STYLE'den otomatik uygulanır)
+        main_layout.addWidget(self.show_games_btn)
+        
         # Oyun silme bölümü
         self.delete_layout, self.delete_id_edit, self.delete_btn = create_delete_game_layout(self)
         main_layout.addLayout(self.delete_layout)
@@ -83,10 +88,15 @@ class SteamUploader(QWidget):
 
     def setup_connections(self):
         """Olay bağlamalarını yapar"""
-        self.browse_btn.clicked.connect(lambda: handle_steam_folder_selection(self))
+        self.browse_btn.clicked.connect(lambda: self.on_steam_path_selected())
         self.delete_btn.clicked.connect(self.delete_game)
         self.restart_btn.clicked.connect(self.restart_steam)
         self.clear_btn.clicked.connect(self.clear_all_added_files)
+        self.show_games_btn.clicked.connect(self.toggle_games_list)
+    
+    def on_steam_path_selected(self):
+        """Steam klasörü seçildiğinde çağrılır"""
+        handle_steam_folder_selection(self)
     
     def load_saved_steam_path(self):
         """Kaydedilmiş Steam klasör yolunu yükler"""
@@ -111,6 +121,7 @@ class SteamUploader(QWidget):
             # --- DLL otomatik indirme ---
             download_dll_if_missing(steam_path)
             # --- Bitiş ---
+            
         except ValueError as e:
             show_error(self, 'Hata', str(e))
         except zipfile.BadZipFile:
@@ -170,3 +181,12 @@ class SteamUploader(QWidget):
             show_error(self, 'Hata', str(e))
         except Exception as e:
             show_error(self, 'Hata', f'Steam yeniden başlatılamadı:\n{e}')
+    
+    def toggle_games_list(self):
+        """Eklenen oyunlar listesini dialog penceresinde göster"""
+        steam_path = self.path_edit.text().strip()
+        if not steam_path or not os.path.isdir(steam_path):
+            show_info(self, 'Bilgi', 'Lütfen önce geçerli bir Steam klasörü seçin!')
+            return
+        
+        show_games_dialog(self, steam_path)

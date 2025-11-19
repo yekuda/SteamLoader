@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QLabel, QPushButton, QLineEdit, QFrame, QHBoxLayout, QVBoxLayout
+    QLabel, QPushButton, QLineEdit, QFrame, QHBoxLayout, QVBoxLayout, QListWidget, QWidget, QAbstractItemView
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
@@ -9,6 +9,7 @@ AlignCenter = Qt.AlignCenter
 Bold = QFont.Bold
 HLine = QFrame.HLine
 Sunken = QFrame.Sunken
+NoFocus = Qt.NoFocus
 
 def create_title_label():
     """Başlık etiketini oluşturur"""
@@ -62,3 +63,39 @@ def create_action_buttons():
     restart_btn = QPushButton("Steam'i Yeniden Başlat")
     clear_btn = QPushButton("Tüm Eklenen Oyunları Temizle")
     return restart_btn, clear_btn
+
+def create_games_list_widget():
+    """Eklenen oyunlar listesi widget'ını oluşturur"""
+    from ui.style import LIST_WIDGET_STYLE, GAMES_CONTAINER_STYLE
+    
+    # Container widget oluştur
+    container = QWidget()
+    container.setStyleSheet(GAMES_CONTAINER_STYLE)
+    
+    # Layout oluştur
+    layout = QVBoxLayout()
+    layout.setContentsMargins(0, 0, 0, 0)
+    layout.setSpacing(8)
+    
+    # Başlık
+    title_label = QLabel('Eklenen Oyunlar')
+    title_label.setStyleSheet('''
+        color: #9c783e;
+        font-weight: bold;
+        font-size: 14px;
+        padding: 0px;
+        margin: 0px;
+    ''')
+    layout.addWidget(title_label)
+    
+    # Liste widget
+    games_list = QListWidget()
+    games_list.setStyleSheet(LIST_WIDGET_STYLE)
+    games_list.setMaximumHeight(140)
+    games_list.setMinimumHeight(80)
+    games_list.setSelectionMode(QAbstractItemView.NoSelection)  # Seçimi devre dışı bırak
+    games_list.setFocusPolicy(Qt.NoFocus)  # Focus'u devre dışı bırak
+    layout.addWidget(games_list)
+    
+    container.setLayout(layout)
+    return container, games_list

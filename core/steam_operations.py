@@ -130,3 +130,37 @@ def clear_all_added_files(steam_path):
                 files_deleted += 1
     
     return files_deleted
+
+def get_installed_games(steam_path):
+    """Eklenen oyunları döndürür (AppID ve isim)"""
+    stplugin_dir = os.path.join(steam_path, 'config', 'stplug-in')
+    games = []
+    
+    if not os.path.exists(stplugin_dir):
+        return games
+    
+    # stplug-in klasöründeki .lua dosyalarını bul (yekuda.lua hariç)
+    for file in os.listdir(stplugin_dir):
+        if file.endswith('.lua') and file != 'yekuda.lua':
+            game_id = file.replace('.lua', '')
+            if game_id.isdigit():
+                # Steam API'den oyun ismini çek
+                game_name = get_game_name_from_api(game_id)
+                games.append({'id': game_id, 'name': game_name})
+    
+    # ID'ye göre sırala
+    games.sort(key=lambda x: int(x['id']))
+    return games
+
+def get_game_name_from_api(game_id):
+    """Steam API'den oyun ismini çeker"""
+    try:
+        api_url = f'https://store.steampowered.com/api/appdetails?appids={game_id}'
+        response = requests.get(api_url, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        if data and data.get(game_id, {}).get('success'):
+            return data[game_id].get('data', {}).get('name', f'AppID: {game_id}')
+    except Exception:
+        pass
+    return f'AppID: {game_id}'
