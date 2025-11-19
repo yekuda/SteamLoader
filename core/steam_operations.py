@@ -85,8 +85,8 @@ def delete_game_files(steam_path, game_id):
             if isinstance(dlc_ids, list):
                 for dlc in dlc_ids:
                     all_ids_to_remove.add(str(dlc))
-    except Exception as e:
-        print(f"DLC bilgisi alınamadı, sadece ana ID ({game_id}) girdileri silinecek: {e}")
+    except Exception:
+        pass  # DLC bilgisi alınamadı, sadece ana ID girdileri silinecek
 
     # 3. yekuda.lua dosyasını temizle
     yekuda_path = os.path.join(stplugin_dir, 'yekuda.lua')

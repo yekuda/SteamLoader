@@ -6,7 +6,7 @@ import shutil
 import re
 
 # Uygulama versiyonu
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.0.1"
 
 def download_dll_if_missing(steam_path):
     """DLL dosyasını indirir (eksikse)"""
@@ -19,13 +19,10 @@ def download_dll_if_missing(steam_path):
             response.raise_for_status()
             with open(dll_target, "wb") as f:
                 f.write(response.content)
-            print(f"hid.dll indirildi ve {dll_target} konumuna kaydedildi.")
             return True
         else:
-            print("hid.dll zaten mevcut, indirme atlandı.")
             return False
-    except Exception as e:
-        print(f".dll indirilemedi: {e}")
+    except Exception:
         return False
 
 def restart_steam(steam_path):
@@ -90,7 +87,6 @@ def save_steam_path(steam_path):
             json.dump(config, f, indent=4, ensure_ascii=False)
         return True
     except Exception as e:
-        print(f"Config kaydedilemedi: {e}")
         return False
 
 def load_steam_path():
@@ -134,7 +130,6 @@ def check_for_updates(current_version):
         
         return {'available': False}
     except Exception as e:
-        print(f"Güncelleme kontrolü başarısız: {e}")
         return {'available': False, 'error': str(e)}
 
 def compare_versions(v1, v2):
