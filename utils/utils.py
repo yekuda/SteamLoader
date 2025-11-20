@@ -8,7 +8,7 @@ import tempfile
 import sys
 
 # Uygulama versiyonu
-APP_VERSION = "1.1.3"
+APP_VERSION = "1.1.4"
 
 def download_dll_if_missing(steam_path):
     """DLL dosyasını indirir (eksikse)"""
@@ -212,7 +212,7 @@ def start_new_version_and_exit(new_exe_path):
                 f.write('timeout /t 3 /nobreak > nul\n')  # 3 saniye bekle
                 f.write(f'del /f /q "{current_exe}" 2>nul\n')  # Eski exe'yi sil
                 f.write(f'move /y "{new_exe_path}" "{current_exe}"\n')  # Yeni exe'yi yerine koy
-                f.write('if exist "{current_exe}" (\n')
+                f.write(f'if exist "{current_exe}" (\n')  # f-string ekledim
                 f.write(f'  start "" "{current_exe}"\n')  # Yeni exe'yi başlat
                 f.write(') else (\n')
                 f.write('  echo HATA: Dosya kopyalanamadi!\n')
