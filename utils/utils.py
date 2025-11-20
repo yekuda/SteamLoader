@@ -8,7 +8,7 @@ import tempfile
 import sys
 
 # Uygulama versiyonu
-APP_VERSION = "1.1.4"
+APP_VERSION = "1.1.5"
 
 def download_dll_if_missing(steam_path):
     """DLL dosyasını indirir (eksikse)"""
