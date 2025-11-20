@@ -4,9 +4,11 @@ import requests
 import json
 import shutil
 import re
+import tempfile
+import sys
 
 # Uygulama versiyonu
-APP_VERSION = "1.1.1"
+APP_VERSION = "1.1.2"
 
 def download_dll_if_missing(steam_path):
     """DLL dosyasını indirir (eksikse)"""
@@ -154,3 +156,74 @@ def compare_versions(v1, v2):
             return -1
     
     return 0
+
+def download_update(download_url, progress_callback=None):
+    """Güncellemeyi indirir ve dosya yolunu döndürür"""
+    try:
+        # Temp klasöründe indirme yap
+        temp_dir = tempfile.gettempdir()
+        filename = os.path.basename(download_url)
+        if not filename.endswith('.exe'):
+            filename = 'SteamLoader_Update.exe'
+        
+        file_path = os.path.join(temp_dir, filename)
+        
+        # Dosyayı indir
+        response = requests.get(download_url, stream=True, timeout=30)
+        response.raise_for_status()
+        
+        total_size = int(response.headers.get('content-length', 0))
+        downloaded_size = 0
+        
+        with open(file_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    f.write(chunk)
+                    downloaded_size += len(chunk)
+                    
+                    # Progress callback
+                    if progress_callback and total_size > 0:
+                        progress = int((downloaded_size / total_size) * 100)
+                        progress_callback(progress)
+        
+        return file_path
+    except Exception as e:
+        raise Exception(f'İndirme hatası: {str(e)}')
+
+def start_new_version_and_exit(new_exe_path):
+    """Yeni sürümü başlatır ve mevcut uygulamayı kapatır"""
+    try:
+        # Mevcut exe'nin yolunu al
+        if getattr(sys, 'frozen', False):
+            # PyInstaller ile derlenmiş exe
+            current_exe = sys.executable
+        else:
+            # Python script olarak çalışıyor (development)
+            current_exe = os.path.abspath(sys.argv[0])
+        
+        if sys.platform == 'win32':
+            # Batch script oluştur
+            batch_script = os.path.join(tempfile.gettempdir(), 'update_steamloader.bat')
+            
+            with open(batch_script, 'w', encoding='utf-8') as f:
+                f.write('@echo off\n')
+                f.write(':: SteamLoader Otomatik Güncelleme Scripti\n')
+                f.write('echo Güncelleme yapiliyor...\n')
+                f.write('timeout /t 2 /nobreak > nul\n')  # 2 saniye bekle
+                f.write(f'del /f /q "{current_exe}"\n')  # Eski exe'yi sil
+                f.write(f'move /y "{new_exe_path}" "{current_exe}"\n')  # Yeni exe'yi yerine koy
+                f.write(f'start "" "{current_exe}"\n')  # Yeni exe'yi başlat
+                f.write(f'del /f /q "{batch_script}"\n')  # Script'i kendini sil
+            
+            # Batch script'i çalıştır
+            subprocess.Popen(['cmd', '/c', batch_script], 
+                           creationflags=subprocess.CREATE_NO_WINDOW | subprocess.DETACHED_PROCESS)
+        else:
+            # Linux/Mac için basit yöntem
+            shutil.move(new_exe_path, current_exe)
+            os.chmod(current_exe, 0o755)
+            subprocess.Popen([current_exe])
+        
+        return True
+    except Exception as e:
+        return False

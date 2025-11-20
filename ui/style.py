@@ -214,3 +214,64 @@ QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0px;
 }
 '''
+
+# Update Dialog stilleri
+UPDATE_DIALOG_TITLE_STYLE = '''
+    color: #9c783e;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 0px;
+    margin: 0px;
+'''
+
+UPDATE_DIALOG_DESC_STYLE = '''
+    color: #d0d0d0;
+    font-size: 13px;
+'''
+
+UPDATE_DIALOG_NOTES_LABEL_STYLE = '''
+    color: #9c783e;
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 10px;
+'''
+
+UPDATE_DIALOG_NOTES_TEXT_STYLE = '''
+    QTextEdit {
+        border: 2px solid #9c783e;
+        border-radius: 8px;
+        background: #1d1e1a;
+        color: #d0d0d0;
+        font-size: 12px;
+        padding: 5px;
+    }
+'''
+
+UPDATE_DIALOG_DOWNLOAD_BUTTON_STYLE = '''
+    QPushButton {
+        background: #9c783e;
+        color: #f0f0f0;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    QPushButton:hover {
+        background: #8a6a35;
+    }
+'''
+
+UPDATE_DIALOG_CANCEL_BUTTON_STYLE = '''
+    QPushButton {
+        background: #353632;
+        color: #d0d0d0;
+        border: 2px solid #9c783e;
+        border-radius: 8px;
+        padding: 8px;
+        font-size: 13px;
+    }
+    QPushButton:hover {
+        background: #9c783e;
+        color: #f0f0f0;
+    }
+'''

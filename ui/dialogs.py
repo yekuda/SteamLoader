@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QLabel, QListWidget, QAbstractItemView, QPushButton, QTextEdit, QFrame
+from PySide6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QLabel, QListWidget, QAbstractItemView, QPushButton, QTextEdit, QFrame, QProgressDialog, QApplication
 from PySide6.QtCore import Qt, QThread, Signal, QUrl
 from PySide6.QtGui import QDesktopServices, QFont
 
@@ -50,6 +50,27 @@ class GamesLoaderThread(QThread):
             self.games_loaded.emit(games)
         except Exception:
             self.games_loaded.emit([])
+
+class UpdateDownloaderThread(QThread):
+    """Güncellemeyi arka planda indiren thread"""
+    progress_updated = Signal(int)
+    download_finished = Signal(str)
+    download_failed = Signal(str)
+    
+    def __init__(self, download_url):
+        super().__init__()
+        self.download_url = download_url
+    
+    def run(self):
+        from utils.utils import download_update
+        try:
+            file_path = download_update(
+                self.download_url,
+                progress_callback=lambda p: self.progress_updated.emit(p)
+            )
+            self.download_finished.emit(file_path)
+        except Exception as e:
+            self.download_failed.emit(str(e))
 
 def show_games_dialog(parent, steam_path):
     """Eklenen oyunları gösteren dialog penceresi"""
@@ -187,15 +208,66 @@ def show_update_dialog(parent, update_info):
     # Butonlar
     button_layout = QVBoxLayout()
     
-    download_btn = QPushButton('İndir ve Aç')
+    download_btn = QPushButton('İndir ve Otomatik Güncelle')
     download_btn.setStyleSheet(UPDATE_DIALOG_DOWNLOAD_BUTTON_STYLE)
     
-    def download_update():
-        if update_info.get('download_url'):
-            QDesktopServices.openUrl(QUrl(update_info['download_url']))
+    def download_and_install_update():
+        download_url = update_info.get('download_url')
+        if not download_url:
+            return
+        
+        # Progress dialog oluştur
+        progress = QProgressDialog('Güncelleme indiriliyor...', 'İptal', 0, 100, parent)
+        progress.setWindowTitle('Güncelleme İndiriliyor')
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMinimumDuration(0)
+        progress.setValue(0)
+        
+        # İndirme thread'ini başlat
+        downloader = UpdateDownloaderThread(download_url)
+        downloader.setParent(parent)
+        
+        def update_progress(value):
+            progress.setValue(value)
+        
+        def on_download_finished(file_path):
+            progress.setValue(100)
+            progress.close()
+            
+            # Başarı mesajı
+            reply = QMessageBox.information(
+                parent,
+                'Güncelleme Hazır',
+                'Güncelleme indirildi!\n\nUygulama kapatılacak ve yeni sürüm başlatılacak.',
+                QMessageBox.Ok
+            )
+            
+            # Yeni sürümü başlat ve uygulamayı kapat
+            from utils.utils import start_new_version_and_exit
+            if start_new_version_and_exit(file_path):
+                dialog.accept()
+                QApplication.quit()
+            else:
+                show_error(parent, 'Hata', 'Yeni sürüm başlatılamadı. Lütfen manuel olarak başlatın:\n' + file_path)
+        
+        def on_download_failed(error_msg):
+            progress.close()
+            show_error(parent, 'İndirme Hatası', error_msg)
+        
+        def on_cancelled():
+            if downloader.isRunning():
+                downloader.terminate()
+                downloader.wait()
+        
+        downloader.progress_updated.connect(update_progress)
+        downloader.download_finished.connect(on_download_finished)
+        downloader.download_failed.connect(on_download_failed)
+        progress.canceled.connect(on_cancelled)
+        
+        downloader.start()
         dialog.accept()
     
-    download_btn.clicked.connect(download_update)
+    download_btn.clicked.connect(download_and_install_update)
     button_layout.addWidget(download_btn)
     
     cancel_btn = QPushButton('Daha Sonra')
