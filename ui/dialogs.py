@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QLabel, QListWidget, QAbstractItemView, QPushButton, QTextEdit
+from PySide6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QLabel, QListWidget, QAbstractItemView, QPushButton, QTextEdit, QFrame
 from PySide6.QtCore import Qt, QThread, Signal, QUrl
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtGui import QDesktopServices, QFont
 
 # PySide6 sabitlerini doğrudan içe aktar
 Information = QMessageBox.Information
@@ -53,38 +53,59 @@ class GamesLoaderThread(QThread):
 
 def show_games_dialog(parent, steam_path):
     """Eklenen oyunları gösteren dialog penceresi"""
-    from ui.style import LIST_WIDGET_STYLE, MAIN_WINDOW_STYLE
+    from ui.style import (
+        MAIN_WINDOW_STYLE, GAMES_DIALOG_TITLE_STYLE, 
+        GAMES_DIALOG_SUBTITLE_STYLE, GAMES_DIALOG_SEPARATOR_STYLE,
+        GAMES_DIALOG_LIST_STYLE
+    )
     
     dialog = QDialog(parent)
     dialog.setWindowTitle('Eklenen Oyunlar')
-    dialog.setMinimumSize(500, 400)
+    dialog.setMinimumSize(600, 500)
     dialog.setStyleSheet(MAIN_WINDOW_STYLE)
     
     layout = QVBoxLayout()
-    layout.setContentsMargins(20, 20, 20, 20)
-    layout.setSpacing(15)
+    layout.setContentsMargins(25, 25, 25, 25)
+    layout.setSpacing(20)
     
-    # Başlık
+    # Başlık container
+    title_container = QVBoxLayout()
+    title_container.setSpacing(8)
+    
+    # Ana başlık
     title_label = QLabel('Eklenen Oyunlar')
-    title_label.setStyleSheet('''
-        color: #9c783e;
-        font-weight: bold;
-        font-size: 18px;
-        padding: 0px;
-        margin: 0px;
-    ''')
-    layout.addWidget(title_label)
+    title_label.setStyleSheet(GAMES_DIALOG_TITLE_STYLE)
+    title_container.addWidget(title_label)
+    
+    # Alt başlık (oyun sayısı için)
+    subtitle_label = QLabel('Oyunlar yükleniyor...')
+    subtitle_label.setStyleSheet(GAMES_DIALOG_SUBTITLE_STYLE)
+    title_container.addWidget(subtitle_label)
+    
+    # Alt çizgi
+    separator = QFrame()
+    separator.setFrameShape(QFrame.HLine)
+    separator.setFrameShadow(QFrame.Sunken)
+    separator.setStyleSheet(GAMES_DIALOG_SEPARATOR_STYLE)
+    title_container.addWidget(separator)
+    
+    layout.addLayout(title_container)
     
     # Liste widget
     list_widget = QListWidget()
-    list_widget.setStyleSheet(LIST_WIDGET_STYLE)
+    # Bold font ayarla
+    bold_font = QFont()
+    bold_font.setBold(True)
+    bold_font.setPointSize(14)
+    list_widget.setFont(bold_font)
+    list_widget.setStyleSheet(GAMES_DIALOG_LIST_STYLE)
     list_widget.setSelectionMode(QAbstractItemView.NoSelection)
     list_widget.setFocusPolicy(Qt.NoFocus)
     
     # Yükleniyor mesajı
-    list_widget.addItem('Oyunlar yükleniyor...')
+    list_widget.addItem('⏳ Oyunlar yükleniyor...')
     
-    layout.addWidget(list_widget)
+    layout.addWidget(list_widget, stretch=1)
     dialog.setLayout(layout)
     
     # Thread oluştur ve başlat
@@ -96,9 +117,14 @@ def show_games_dialog(parent, steam_path):
             list_widget.clear()
             if not games_list:
                 list_widget.addItem('Henüz oyun eklenmemiş')
+                subtitle_label.setText('Toplam 0 oyun')
             else:
+                game_count = len(games_list)
+                subtitle_label.setText(f'Toplam {game_count} oyun')
                 for game in games_list:
-                    list_widget.addItem(f"{game['name']} (ID: {game['id']})")
+                    # Oyun adı ve ID'yi daha güzel göster
+                    game_text = f"{game['name']}\n   ID: {game['id']}"
+                    list_widget.addItem(game_text)
     
     loader_thread.games_loaded.connect(update_games_list)
     loader_thread.finished.connect(loader_thread.deleteLater)  # Thread bitince temizle
@@ -130,41 +156,31 @@ def show_update_dialog(parent, update_info):
     layout.setSpacing(15)
     
     # Başlık
+    from ui.style import (
+        UPDATE_DIALOG_TITLE_STYLE, UPDATE_DIALOG_DESC_STYLE,
+        UPDATE_DIALOG_NOTES_LABEL_STYLE, UPDATE_DIALOG_NOTES_TEXT_STYLE,
+        UPDATE_DIALOG_DOWNLOAD_BUTTON_STYLE, UPDATE_DIALOG_CANCEL_BUTTON_STYLE
+    )
     title_label = QLabel(f'Yeni Versiyon Mevcut: v{update_info["version"]}')
-    title_label.setStyleSheet('''
-        color: #9c783e;
-        font-weight: bold;
-        font-size: 18px;
-        padding: 0px;
-        margin: 0px;
-    ''')
+    title_label.setStyleSheet(UPDATE_DIALOG_TITLE_STYLE)
     layout.addWidget(title_label)
     
     # Açıklama
     desc_label = QLabel('Yeni bir güncelleme mevcut. İndirmek için aşağıdaki butona tıklayın.')
-    desc_label.setStyleSheet('color: #d0d0d0; font-size: 13px;')
+    desc_label.setStyleSheet(UPDATE_DIALOG_DESC_STYLE)
     desc_label.setWordWrap(True)
     layout.addWidget(desc_label)
     
     # Release notes (varsa)
     if update_info.get('release_notes'):
         notes_label = QLabel('Güncelleme Notları:')
-        notes_label.setStyleSheet('color: #9c783e; font-weight: bold; font-size: 14px; margin-top: 10px;')
+        notes_label.setStyleSheet(UPDATE_DIALOG_NOTES_LABEL_STYLE)
         layout.addWidget(notes_label)
         
         notes_text = QTextEdit()
         notes_text.setReadOnly(True)
         notes_text.setMaximumHeight(150)
-        notes_text.setStyleSheet('''
-            QTextEdit {
-                border: 2px solid #9c783e;
-                border-radius: 8px;
-                background: #1d1e1a;
-                color: #d0d0d0;
-                font-size: 12px;
-                padding: 5px;
-            }
-        ''')
+        notes_text.setStyleSheet(UPDATE_DIALOG_NOTES_TEXT_STYLE)
         notes_text.setPlainText(update_info['release_notes'])
         layout.addWidget(notes_text)
     
@@ -172,19 +188,7 @@ def show_update_dialog(parent, update_info):
     button_layout = QVBoxLayout()
     
     download_btn = QPushButton('İndir ve Aç')
-    download_btn.setStyleSheet('''
-        QPushButton {
-            background: #9c783e;
-            color: #f0f0f0;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        QPushButton:hover {
-            background: #8a6a35;
-        }
-    ''')
+    download_btn.setStyleSheet(UPDATE_DIALOG_DOWNLOAD_BUTTON_STYLE)
     
     def download_update():
         if update_info.get('download_url'):
@@ -195,20 +199,7 @@ def show_update_dialog(parent, update_info):
     button_layout.addWidget(download_btn)
     
     cancel_btn = QPushButton('Daha Sonra')
-    cancel_btn.setStyleSheet('''
-        QPushButton {
-            background: #353632;
-            color: #d0d0d0;
-            border: 2px solid #9c783e;
-            border-radius: 8px;
-            padding: 8px;
-            font-size: 13px;
-        }
-        QPushButton:hover {
-            background: #9c783e;
-            color: #f0f0f0;
-        }
-    ''')
+    cancel_btn.setStyleSheet(UPDATE_DIALOG_CANCEL_BUTTON_STYLE)
     cancel_btn.clicked.connect(dialog.reject)
     button_layout.addWidget(cancel_btn)
     

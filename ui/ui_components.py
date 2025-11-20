@@ -13,18 +13,20 @@ NoFocus = Qt.NoFocus
 
 def create_title_label():
     """Başlık etiketini oluşturur"""
+    from ui.style import TITLE_LABEL_STYLE
     title = QLabel('SteamLoader')
     title.setFont(QFont('Segoe UI', 24, Bold))
     title.setAlignment(AlignCenter)
-    title.setStyleSheet('color: #9c783e; margin-bottom: 0px;')
+    title.setStyleSheet(TITLE_LABEL_STYLE)
     return title
 
 def create_description_label():
     """Açıklama etiketini oluşturur"""
+    from ui.style import DESCRIPTION_LABEL_STYLE
     desc = QLabel('Steam yolunu seçin ve oyunun ZIP dosyasını sürükleyip bırakın.\nDosyalar otomatik olarak Steam klasörünüze aktarılacaktır.')
     desc.setFont(QFont('Segoe UI', 12))
     desc.setAlignment(AlignCenter)
-    desc.setStyleSheet('color: #b0b0b0; margin-bottom: 10px;')
+    desc.setStyleSheet(DESCRIPTION_LABEL_STYLE)
     desc.setWordWrap(True)
     return desc
 
@@ -52,10 +54,11 @@ def create_delete_game_layout(parent):
 
 def create_separator_line():
     """Ayırıcı çizgiyi oluşturur"""
+    from ui.style import SEPARATOR_LINE_STYLE
     line = QFrame()
     line.setFrameShape(HLine)
     line.setFrameShadow(Sunken)
-    line.setStyleSheet("background-color: #9c783e;")
+    line.setStyleSheet(SEPARATOR_LINE_STYLE)
     return line
 
 def create_action_buttons():
@@ -78,14 +81,9 @@ def create_games_list_widget():
     layout.setSpacing(8)
     
     # Başlık
+    from ui.style import GAMES_LIST_TITLE_STYLE
     title_label = QLabel('Eklenen Oyunlar')
-    title_label.setStyleSheet('''
-        color: #9c783e;
-        font-weight: bold;
-        font-size: 14px;
-        padding: 0px;
-        margin: 0px;
-    ''')
+    title_label.setStyleSheet(GAMES_LIST_TITLE_STYLE)
     layout.addWidget(title_label)
     
     # Liste widget

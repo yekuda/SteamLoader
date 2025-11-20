@@ -18,8 +18,9 @@ class DragDropLabel(QLabel):
         self.setAcceptDrops(True)
 
     def dragEnterEvent(self, event):
+        from ui.style import DRAG_DROP_HOVER_STYLE
         if event.mimeData().hasUrls():
-            self.setStyleSheet(DRAG_DROP_AREA_STYLE + 'QLabel { background: #353632; }')
+            self.setStyleSheet(DRAG_DROP_AREA_STYLE + DRAG_DROP_HOVER_STYLE)
             event.acceptProposedAction()
         else:
             event.ignore()
