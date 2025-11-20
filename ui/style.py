@@ -118,3 +118,99 @@ QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0px;
 }
 '''
+
+# UI Components stilleri
+TITLE_LABEL_STYLE = '''
+    color: #9c783e;
+    margin-bottom: 0px;
+'''
+
+DESCRIPTION_LABEL_STYLE = '''
+    color: #b0b0b0;
+    margin-bottom: 10px;
+'''
+
+SEPARATOR_LINE_STYLE = '''
+    background-color: #9c783e;
+'''
+
+GAMES_LIST_TITLE_STYLE = '''
+    color: #9c783e;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0px;
+    margin: 0px;
+'''
+
+# Drag drop hover stili
+DRAG_DROP_HOVER_STYLE = '''
+    QLabel {
+        background: #353632;
+    }
+'''
+
+# Dialog stilleri
+GAMES_DIALOG_TITLE_STYLE = '''
+    color: #9c783e;
+    font-weight: bold;
+    font-size: 22px;
+    padding: 0px;
+    margin: 0px;
+'''
+
+GAMES_DIALOG_SUBTITLE_STYLE = '''
+    color: #b0b0b0;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 0px;
+    margin: 0px;
+'''
+
+GAMES_DIALOG_SEPARATOR_STYLE = '''
+    background-color: #9c783e;
+    max-height: 2px;
+    margin: 5px 0px;
+'''
+
+# Oyunlar dialog liste widget stili
+GAMES_DIALOG_LIST_STYLE = '''
+QListWidget {
+    border: 2px solid #9c783e;
+    border-radius: 12px;
+    background: #1d1e1a;
+    color: #d0d0d0;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px;
+}
+QListWidget::item {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin: 4px 0px;
+    background: #252622;
+    border: 1px solid transparent;
+    font-weight: bold;
+}
+QListWidget::item:hover {
+    background: #353632;
+    border: 1px solid #9c783e;
+}
+QScrollBar:vertical {
+    border: none;
+    background: #1d1e1a;
+    width: 12px;
+    border-radius: 6px;
+    margin: 2px;
+}
+QScrollBar::handle:vertical {
+    background: #9c783e;
+    border-radius: 6px;
+    min-height: 30px;
+}
+QScrollBar::handle:vertical:hover {
+    background: #8a6a35;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+'''
