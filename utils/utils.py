@@ -6,7 +6,7 @@ import shutil
 import re
 
 # Uygulama versiyonu
-APP_VERSION = "1.0.2"
+APP_VERSION = "1.1.0"
 
 def download_dll_if_missing(steam_path):
     """DLL dosyasını indirir (eksikse)"""

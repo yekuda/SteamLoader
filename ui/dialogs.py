@@ -107,9 +107,14 @@ def show_games_dialog(parent, steam_path):
     dialog.exec()
     
     # Dialog kapatıldığında thread'in bitmesini bekle
-    if loader_thread.isRunning():
-        loader_thread.terminate()
-        loader_thread.wait(1000)  # En fazla 1 saniye bekle
+    # Thread'in hala var olup olmadığını kontrol et
+    try:
+        if loader_thread.isRunning():
+            loader_thread.terminate()
+            loader_thread.wait(1000)  # En fazla 1 saniye bekle
+    except RuntimeError:
+        # Thread zaten silinmiş, bir şey yapma
+        pass
 
 def show_update_dialog(parent, update_info):
     """Güncelleme mevcut olduğunda gösterilen dialog"""

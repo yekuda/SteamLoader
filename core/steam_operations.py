@@ -3,6 +3,35 @@ import zipfile
 import shutil
 import requests
 
+def validate_app_id(app_id):
+    """AppID'nin geçerli olup olmadığını Steam API'den kontrol eder"""
+    try:
+        api_url = f'https://store.steampowered.com/api/appdetails?appids={app_id}'
+        response = requests.get(api_url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        
+        if not data or not data.get(app_id):
+            return False, None, "AppID Steam'de bulunamadı"
+        
+        app_data = data[app_id]
+        if not app_data.get('success'):
+            return False, None, "AppID geçersiz veya erişilemiyor"
+        
+        game_data = app_data.get('data', {})
+        game_name = game_data.get('name', f'AppID: {app_id}')
+        
+        # Oyun tipini kontrol et (sadece oyunlar, DLC değil)
+        game_type = game_data.get('type', '').lower()
+        if game_type == 'dlc':
+            return False, game_name, "Bu bir DLC, ana oyun AppID'si gerekli"
+        
+        return True, game_name, None
+    except requests.RequestException as e:
+        return False, None, f"Steam API'ye bağlanılamadı: {str(e)}"
+    except Exception as e:
+        return False, None, f"Doğrulama hatası: {str(e)}"
+
 def process_zip_file(zip_path, steam_path):
     """ZIP dosyasını işler ve gerekli dosyaları Steam klasörüne kopyalar"""
     stplugin_dir = os.path.join(steam_path, 'config', 'stplug-in')
@@ -13,6 +42,14 @@ def process_zip_file(zip_path, steam_path):
     game_id = os.path.splitext(os.path.basename(zip_path))[0]
     if not game_id.isdigit():
         raise ValueError('ZIP dosyasının adı bir AppID (sadece sayılardan oluşmalı) olmalı!')
+
+    # AppID doğrulama (yükleme öncesi kontrol)
+    is_valid, game_name, error_msg = validate_app_id(game_id)
+    if not is_valid:
+        error_detail = f"❌ AppID Doğrulama Başarısız\n\n{error_msg}"
+        if game_name:
+            error_detail += f"\n\nBulunan: {game_name}\n\nLütfen geçerli bir oyun AppID'si kullandığınızdan emin olun."
+        raise ValueError(error_detail)
 
     # DLC bilgilerini al
     api_url = f'https://store.steampowered.com/api/appdetails?appids={game_id}'

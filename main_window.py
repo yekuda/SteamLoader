@@ -8,7 +8,6 @@ AlignTop = Qt.AlignTop
 
 import os
 import sys
-import zipfile
 
 # Kendi modüllerimizi içe aktar
 from ui.style import MAIN_WINDOW_STYLE
@@ -21,11 +20,13 @@ from ui.ui_components import (
 from core.event_handlers import (
     handle_steam_folder_selection, handle_zip_file_selection,
     validate_steam_path, handle_game_deletion, 
-    handle_clear_all_files, handle_steam_restart
+    handle_clear_all_files, handle_steam_restart,
+    handle_zip_processing, handle_game_deletion_complete,
+    handle_clear_all_complete, handle_steam_restart_complete,
+    handle_show_games_list
 )
-from utils.utils import download_dll_if_missing, restart_steam, load_steam_path, check_for_updates, APP_VERSION
-from core.steam_operations import process_zip_file, delete_game_files, clear_all_added_files
-from ui.dialogs import show_info, show_error, confirm_action, show_games_dialog, show_update_dialog
+from utils.utils import load_steam_path, check_for_updates, APP_VERSION
+from ui.dialogs import show_update_dialog
 
 class UpdateCheckerThread(QThread):
     """Güncelleme kontrolünü arka planda yapan thread"""
@@ -126,86 +127,36 @@ class SteamUploader(QWidget):
 
     def process_zip(self, zip_path):
         """ZIP dosyasını işler"""
-        steam_path = validate_steam_path(self)
-        if not steam_path:
-            return
-        
-        try:
-            new_count = process_zip_file(zip_path, steam_path)
-            show_info(self, 'Başarılı', f'Oyun dosyaları başarıyla aktarıldı!\n{new_count} adet yeni DLC eklendi.')
-
-            # --- DLL otomatik indirme ---
-            download_dll_if_missing(steam_path)
-            # --- Bitiş ---
-            
-        except ValueError as e:
-            show_error(self, 'Hata', str(e))
-        except zipfile.BadZipFile:
-            show_error(self, 'Hata', 'Seçilen dosya bozuk veya geçerli bir ZIP arşivi değil.')
-        except Exception as e:
-            show_error(self, 'Hata', f'Bir hata oluştu:\n{e}')
+        handle_zip_processing(self, zip_path)
 
     def delete_game(self):
         """Oyunu siler"""
         result, steam_path, game_id = handle_game_deletion(self)
         if not result:
             return
-
-        try:
-            lua_deleted, lines_removed_count = delete_game_files(steam_path, game_id)
-            
-            # Sonuç mesajını göster
-            message_parts = []
-            if lua_deleted:
-                message_parts.append(f"• {game_id} İdli oyun silindi ve yapılandırma dosyası kaldırıldı.")
-            if lines_removed_count > 0:
-                message_parts.append(f"• 'yekuda.lua' dosyasından {lines_removed_count} girdi kaldırıldı.")
-            
-            if not message_parts:
-                final_message = f"{game_id} ID'li oyuna ait herhangi bir yapılandırma dosyası veya girdisi bulunamadı."
-            else:
-                final_message = f"{game_id} ID'li oyun için temizleme işlemi tamamlandı:\n\n" + "\n".join(message_parts)
-
-            show_info(self, 'İşlem Tamamlandı', final_message)
+        
+        if handle_game_deletion_complete(self, steam_path, game_id):
             self.delete_id_edit.clear()
-
-        except Exception as e:
-            show_error(self, 'Hata', f'Oyun silinirken bir hata oluştu:\n{e}')
 
     def clear_all_added_files(self):
         """Tüm eklenen dosyaları temizler"""
         steam_path = handle_clear_all_files(self)
         if not steam_path:
             return
-            
-        try:
-            files_deleted = clear_all_added_files(steam_path)
-            show_info(self, 'Başarılı', f'Tüm eklenen oyun dosyaları ve DLC girdileri temizlendi. Toplam {files_deleted} dosya silindi.')
-        except Exception as e:
-            show_error(self, 'Hata', f'Temizleme sırasında hata oluştu:\n{e}')
+        
+        handle_clear_all_complete(self, steam_path)
 
     def restart_steam(self):
         """Steam'i yeniden başlatır"""
         steam_path = handle_steam_restart(self)
         if not steam_path:
             return
-            
-        try:
-            restart_steam(steam_path)
-            show_info(self, 'Başarılı', 'Steam yeniden başlatılıyor...')
-        except FileNotFoundError as e:
-            show_error(self, 'Hata', str(e))
-        except Exception as e:
-            show_error(self, 'Hata', f'Steam yeniden başlatılamadı:\n{e}')
+        
+        handle_steam_restart_complete(self, steam_path)
     
     def toggle_games_list(self):
         """Eklenen oyunlar listesini dialog penceresinde göster"""
-        steam_path = self.path_edit.text().strip()
-        if not steam_path or not os.path.isdir(steam_path):
-            show_info(self, 'Bilgi', 'Lütfen önce geçerli bir Steam klasörü seçin!')
-            return
-        
-        show_games_dialog(self, steam_path)
+        handle_show_games_list(self)
     
     def check_updates_async(self):
         """Güncelleme kontrolünü arka planda yapar"""
