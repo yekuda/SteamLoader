@@ -43,7 +43,7 @@ class UpdateCheckerThread(QThread):
 class SteamUploader(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('SteamLoader')
+        self.setWindowTitle(f'SteamLoader v{APP_VERSION}')
         self.setMinimumSize(580, 560)
         self.setStyleSheet(MAIN_WINDOW_STYLE)
         # Basit bir simge - varsayılan pencere simgesini kullan
