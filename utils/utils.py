@@ -8,7 +8,7 @@ import tempfile
 import sys
 
 # Uygulama versiyonu
-APP_VERSION = "1.1.2"
+APP_VERSION = "1.1.3"
 
 def download_dll_if_missing(steam_path):
     """DLL dosyasını indirir (eksikse)"""
@@ -205,19 +205,23 @@ def start_new_version_and_exit(new_exe_path):
             # Batch script oluştur
             batch_script = os.path.join(tempfile.gettempdir(), 'update_steamloader.bat')
             
-            with open(batch_script, 'w', encoding='utf-8') as f:
+            with open(batch_script, 'w', encoding='ansi') as f:  # ANSI encoding kullan
                 f.write('@echo off\n')
-                f.write(':: SteamLoader Otomatik Güncelleme Scripti\n')
-                f.write('echo Güncelleme yapiliyor...\n')
-                f.write('timeout /t 2 /nobreak > nul\n')  # 2 saniye bekle
-                f.write(f'del /f /q "{current_exe}"\n')  # Eski exe'yi sil
+                f.write('title SteamLoader Guncelleniyor\n')
+                f.write('echo SteamLoader guncelleniyor, lutfen bekleyin...\n')
+                f.write('timeout /t 3 /nobreak > nul\n')  # 3 saniye bekle
+                f.write(f'del /f /q "{current_exe}" 2>nul\n')  # Eski exe'yi sil
                 f.write(f'move /y "{new_exe_path}" "{current_exe}"\n')  # Yeni exe'yi yerine koy
-                f.write(f'start "" "{current_exe}"\n')  # Yeni exe'yi başlat
-                f.write(f'del /f /q "{batch_script}"\n')  # Script'i kendini sil
+                f.write('if exist "{current_exe}" (\n')
+                f.write(f'  start "" "{current_exe}"\n')  # Yeni exe'yi başlat
+                f.write(') else (\n')
+                f.write('  echo HATA: Dosya kopyalanamadi!\n')
+                f.write('  pause\n')
+                f.write(')\n')
+                f.write(f'del /f /q "{batch_script}" 2>nul\n')  # Script'i kendini sil
             
-            # Batch script'i çalıştır
-            subprocess.Popen(['cmd', '/c', batch_script], 
-                           creationflags=subprocess.CREATE_NO_WINDOW | subprocess.DETACHED_PROCESS)
+            # Batch script'i görünür pencerede çalıştır (debug için)
+            subprocess.Popen(['cmd', '/c', batch_script])
         else:
             # Linux/Mac için basit yöntem
             shutil.move(new_exe_path, current_exe)
