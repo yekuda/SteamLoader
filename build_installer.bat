@@ -49,7 +49,7 @@ if exist %ISCC% (
     echo ✓ Installer başarıyla oluşturuldu!
     echo.
     echo ╔════════════════════════════════════════╗
-    echo ║   ✓ BUILD BAŞARILI!                   ║
+    echo ║   ✓ BUILD BAŞARILI!                   ║s
     echo ╚════════════════════════════════════════╝
     echo.
     echo 📦 Çıktı dosyaları:
