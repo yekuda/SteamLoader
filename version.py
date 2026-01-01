@@ -2,7 +2,7 @@
 SteamLoader - Merkezi Sürüm Yönetimi
 =====================================
 Bu dosya uygulamanın sürüm bilgisini tek noktadan yönetir.
-Hem Python kodu hem de Inno Setup installer bu dosyayı kullanır.
+Hem Python kodu hem de build sistemi bu dosyayı kullanır.
 
 Sürüm Numarası: MAJOR.MINOR.PATCH
 - MAJOR: Büyük değişiklikler, geriye uyumsuzluklar

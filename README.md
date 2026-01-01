@@ -129,14 +129,14 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### Installer Oluşturma
+### EXE Oluşturma
 
 ```bash
-# Gereksinimler: PyInstaller + Inno Setup
-build_installer.bat
+# Gereksinimler: PyInstaller
+build_exe.bat
 ```
 
-Çıktı: `installer_output/SteamLoader_Setup_v1.0.0.exe`
+Çıktı: `dist/SteamLoader.exe`
 
 ## ⚠️ Önemli Notlar
 
